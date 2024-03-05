@@ -1,5 +1,5 @@
 import { Container, Row, Col, Form } from "react-bootstrap";
-import SingleBook from "../Cards/SingleBook"
+import SingleBook from "../Cards/SingleBook";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../Cards/SingleBook";
@@ -9,7 +9,6 @@ const AllTheBooks = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState([]);
 
-  // Endpoint
   const url = "https://striveschool-api.herokuapp.com/books";
 
   const fetchData = async () => {
@@ -36,14 +35,14 @@ const AllTheBooks = () => {
               type="search"
               placeholder="Search a book"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </Form.Group>
         </Col>
       </Row>
       <Row className="g-2 mt-3">
         {products
-          .filter(b => b.title.toLowerCase().includes(searchQuery))
+          .filter((b) => b.title.toLowerCase().includes(searchQuery))
           .map((book, asin) => {
             return (
               <Col key={asin}>

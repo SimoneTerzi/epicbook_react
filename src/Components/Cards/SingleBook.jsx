@@ -4,13 +4,14 @@ import styles from "./SingleBook.css";
 import CommentArea from "../Modal/CommentArea";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-// asin, img, title, category, price
+
 const SingleBook = ({ book, asin }) => {
   const [selected, setSelected] = useState(false);
 
   const handleClick = () => {
     setSelected(!selected);
   };
+
   return (
     <Card
       key={asin}
@@ -18,7 +19,9 @@ const SingleBook = ({ book, asin }) => {
       onClick={handleClick}
       className={selected ? styles.cardStyle : styles.card}
     >
-      <Card.Img variant="top" src={book.img} />
+      <div className={styles.imageContainer}>
+        <Card.Img variant="top" src={book.img} className={styles.bookImage} />
+      </div>
       <Card.Body>
         <Card.Title className={styles.truncateText}>{book.title}</Card.Title>
         <Card.Subtitle>{book.category}</Card.Subtitle>
@@ -33,4 +36,5 @@ const SingleBook = ({ book, asin }) => {
     </Card>
   );
 };
+
 export default SingleBook;

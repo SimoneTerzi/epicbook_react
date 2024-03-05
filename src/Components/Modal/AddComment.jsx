@@ -1,8 +1,9 @@
+// Nel componente AddComment
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 
-const AddComment = ({ asin }) => {
+const AddComment = ({ asin, updateComments }) => {
   const [comment, setComment] = useState({
     elementId: asin,
     rate: 0,
@@ -19,7 +20,6 @@ const AddComment = ({ asin }) => {
       let response = await axios.post(
         "https://striveschool-api.herokuapp.com/api/comments/",
         comment,
-
         {
           headers: {
             "Content-type": "application/json",
@@ -28,24 +28,25 @@ const AddComment = ({ asin }) => {
           },
         }
       );
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         alert("Recensione inviata!");
         setComment({
           comment: "",
           rate: 1,
           elementId: null,
         });
+        // Chiamata alla funzione di aggiornamento dei commenti
+        updateComments();
       } else {
         throw new Error("Qualcosa è andato storto");
       }
     } catch (error) {
-      alert(error);
+      alert(error.message);
     }
   };
 
   return (
     <div className="d-flex flex-column gap-3">
-    
       <input
         onChange={(e) =>
           setComment({
@@ -53,7 +54,7 @@ const AddComment = ({ asin }) => {
             rate: Number(e.target.value),
           })
         }
-        name={comment.rate}
+        value={comment.rate}
         type="number"
         min={1}
         max={5}
@@ -66,13 +67,13 @@ const AddComment = ({ asin }) => {
             comment: e.target.value,
           })
         }
-        name={comment.comment}
+        value={comment.comment}
         type="text"
         placeholder="comment"
       />
       <Button onClick={sendComment}>Add Comment</Button>
-
     </div>
   );
 };
+
 export default AddComment;

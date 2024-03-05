@@ -1,16 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Mainlayout from "../Layout/Layout";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Card, Container } from "react-bootstrap";
-import style from "../Page/BookDetails.css";
+
 
 const Bookdetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  console.log(book);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  const getBookDetails = async () => {
+  const handleResize = () => {
+    setWindowHeight(window.innerHeight);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const fetchBookDetails = useCallback(async () => {
     try {
       const response = await axios.get(
         `https://striveschool-api.herokuapp.com/books/${id}`,
@@ -27,32 +38,49 @@ const Bookdetails = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-  useEffect(() => {
-    getBookDetails();
   }, [id]);
+
+  useEffect(() => {
+    fetchBookDetails();
+  }, [fetchBookDetails]);
 
   return (
     <Mainlayout>
-      <Container className="d-flex justify-content-center">
-        <Card
-          className="bg-dark text-white m-4"
-          style={{ width: "20rem", height: "40rem" }}
-        >
-          <Card.Img variant="top" src={book && book.img} alt="cover libro" />
-          <Card.Body>
-            {/* {<p>{book ? book.id : "Nessun titolo disponibile"}</p> */}
-            <Card.Title>{book && book.title}</Card.Title>
-            <Card.Subtitle>{book && book.category}</Card.Subtitle>
-            <Card.Text>
-              prezzo: <span>€{book && book.price}</span>
-            </Card.Text>
-            <Card.Text>
-              cod. asin: <span>{book && book.asin}</span>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      </Container>
+      <div className="full-screen-container">
+        <Container fluid className="d-flex justify-content-center align-items-center h-100">
+          <Card
+            className="bg-dark text-white m-4"
+            style={{ width: "100%", height: "100%" }}
+          >
+            {book && (
+              <Card.Img
+                variant="top"
+                src={book.img}
+                alt="cover libro"
+                style={{
+                  width: "100%",
+                  height: `${windowHeight}px`, // Imposta l'altezza in base all'altezza della finestra
+                  objectFit: "cover",
+                }}
+              />
+            )}
+            <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+              {book && (
+                <>
+                  <Card.Title>{book.title}</Card.Title>
+                  <Card.Subtitle>{book.category}</Card.Subtitle>
+                  <Card.Text>
+                    prezzo: <span>€{book.price}</span>
+                  </Card.Text>
+                  <Card.Text>
+                    cod. asin: <span>{book.asin}</span>
+                  </Card.Text>
+                </>
+              )}
+            </Card.Body>
+          </Card>
+        </Container>
+      </div>
     </Mainlayout>
   );
 };
