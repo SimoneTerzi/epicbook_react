@@ -1,4 +1,3 @@
-// Nel componente CommentList
 import { ListGroup } from "react-bootstrap";
 import SingleComment from "./SingleComment";
 import { Row, Col } from "react-bootstrap";

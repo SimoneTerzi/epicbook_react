@@ -1,38 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Mainlayout from "../Layout/Layout";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { Card, Container } from "react-bootstrap";
+import { Card, Container, Button } from "react-bootstrap";
+import { token, apiUrlBook } from "../Fetch/Token";
 
 
 const Bookdetails = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-
-  const handleResize = () => {
-    setWindowHeight(window.innerHeight);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const fetchBookDetails = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `https://striveschool-api.herokuapp.com/books/${id}`,
-        {
-          headers: {
-            "Content-type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWRhMGQyNmQwMDFmMzAwMTk2YWM5NzkiLCJpYXQiOjE3MDg3ODkwMzAsImV4cCI6MTcwOTk5ODYzMH0.CPuSb74ofvTVMHzBMgmJVarrTAdiPf_5HJfCHwHI2Go",
-          },
-        }
-      );
+      const response = await axios.get(`${apiUrlBook}${id}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const dataDetails = await response.data;
       setBook(dataDetails);
     } catch (error) {
@@ -45,35 +29,31 @@ const Bookdetails = () => {
   }, [fetchBookDetails]);
 
   return (
-    <Mainlayout>
+    <>
+      <Button as={Link} to="/" className="btn btn-primary mb-4 btn-lg d-block mx-auto">
+        HomePage
+      </Button>
       <div className="full-screen-container">
         <Container fluid className="d-flex justify-content-center align-items-center h-100">
-          <Card
-            className="bg-dark text-white m-4"
-            style={{ width: "100%", height: "100%" }}
-          >
+          <Card className="bg-dark text-white m-4" style={{ maxWidth: "800px", width: "100%" }}>
             {book && (
               <Card.Img
                 variant="top"
                 src={book.img}
                 alt="cover libro"
-                style={{
-                  width: "100%",
-                  height: `${windowHeight}px`, // Imposta l'altezza in base all'altezza della finestra
-                  objectFit: "cover",
-                }}
+                className="book-image"
               />
             )}
-            <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+            <Card.Body className="text-center">
               {book && (
                 <>
                   <Card.Title>{book.title}</Card.Title>
-                  <Card.Subtitle>{book.category}</Card.Subtitle>
+                  <Card.Subtitle className="mb-2 text-muted">{book.category}</Card.Subtitle>
                   <Card.Text>
-                    prezzo: <span>€{book.price}</span>
+                    Prezzo: <span>€{book.price}</span>
                   </Card.Text>
                   <Card.Text>
-                    cod. asin: <span>{book.asin}</span>
+                    Cod. ASIN: <span>{book.asin}</span>
                   </Card.Text>
                 </>
               )}
@@ -81,8 +61,9 @@ const Bookdetails = () => {
           </Card>
         </Container>
       </div>
-    </Mainlayout>
+    </>
   );
 };
 
 export default Bookdetails;
+

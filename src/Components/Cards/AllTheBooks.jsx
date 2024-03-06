@@ -2,6 +2,7 @@ import { Container, Row, Col, Form } from "react-bootstrap";
 import SingleBook from "../Cards/SingleBook";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { token, apiUrlBook } from "../../Fetch/Token"; 
 import "../Cards/SingleBook";
 import styles from "../Cards/SingleBook";
 
@@ -9,11 +10,13 @@ const AllTheBooks = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState([]);
 
-  const url = "https://striveschool-api.herokuapp.com/books";
-
   const fetchData = async () => {
     try {
-      const response = await axios.get(url);
+      const response = await axios.get(apiUrlBook, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
+      });
       const data = response.data;
       setProducts(data.slice(0, 25));
       console.log(data);

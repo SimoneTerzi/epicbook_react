@@ -5,6 +5,7 @@ import Loading from "../LoadingBar/Loading";
 import Error from "../Alert/AlertError";
 import AddComment from "./AddComment";
 import CommentList from "./CommentList";
+import { token, apiUrlComment } from "../../Fetch/Token"; 
 
 const CommentArea = ({ asin }) => {
   // Bootstrap
@@ -24,16 +25,12 @@ const CommentArea = ({ asin }) => {
     const getComments = async () => {
       setIsLoading(true);
       try {
-        let response = await axios.get(
-          "https://striveschool-api.herokuapp.com/api/comments/" + asin,
-          {
-            headers: {
-              "Content-type": "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWRhMGQyNmQwMDFmMzAwMTk2YWM5NzkiLCJpYXQiOjE3MDg3ODkwMzAsImV4cCI6MTcwOTk5ODYzMH0.CPuSb74ofvTVMHzBMgmJVarrTAdiPf_5HJfCHwHI2Go",
-            },
-          }
-        );
+        let response = await axios.get(`${apiUrlComment}${asin}`, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 200) {
           let commentsData = await response.data;
           setComments(commentsData);

@@ -1,7 +1,10 @@
-// Nel componente AddComment
+
+
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { token, apiUrlComment } from "../../Fetch/Token";
+import Rating from "react-rating-stars-component";
 
 const AddComment = ({ asin, updateComments }) => {
   const [comment, setComment] = useState({
@@ -17,17 +20,12 @@ const AddComment = ({ asin, updateComments }) => {
   const sendComment = async (e) => {
     e.preventDefault();
     try {
-      let response = await axios.post(
-        "https://striveschool-api.herokuapp.com/api/comments/",
-        comment,
-        {
-          headers: {
-            "Content-type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWI0ZmFhNzM4MjY2NTAwMTljNzEwOTkiLCJpYXQiOjE3MDk1NjQ5MzcsImV4cCI6MTcxMDc3NDUzN30.QWv-Cb42iFxWfbKguj0mFpz8UrhpInI8ItW8TclYawY",
-          },
-        }
-      );
+      let response = await axios.post(`${apiUrlComment}`, comment, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200 || response.status === 201) {
         alert("Recensione inviata!");
         setComment({
@@ -35,7 +33,8 @@ const AddComment = ({ asin, updateComments }) => {
           rate: 1,
           elementId: null,
         });
-        // Chiamata alla funzione di aggiornamento dei commenti
+        
+        
         updateComments();
       } else {
         throw new Error("Qualcosa è andato storto");
@@ -47,18 +46,17 @@ const AddComment = ({ asin, updateComments }) => {
 
   return (
     <div className="d-flex flex-column gap-3">
-      <input
-        onChange={(e) =>
+      <Rating
+        count={5}
+        value={comment.rate}
+        onChange={(value) =>
           setComment({
             ...comment,
-            rate: Number(e.target.value),
+            rate: value,
           })
         }
-        value={comment.rate}
-        type="number"
-        min={1}
-        max={5}
-        placeholder="rate"
+        size={24}
+        activeColor="#ffd700"
       />
       <input
         onChange={(e) =>
